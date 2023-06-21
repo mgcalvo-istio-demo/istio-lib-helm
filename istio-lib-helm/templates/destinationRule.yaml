@@ -11,6 +11,6 @@ spec:
     #reemplace el punto por guion bajo
     - name: "v{{ $tags.version | replace "." "" }}"
       labels:
-        app: {{ include "istio-lib-helm.name" $ }}
+        app: {{ include "istio-lib-helm.fullname" $ }}
         version: {{ $tags.version }}
   {{- end }}
