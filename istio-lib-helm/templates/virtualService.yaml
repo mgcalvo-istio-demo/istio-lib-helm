@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "istio-lib-helm.fullname" . }}
+  labels:
+    {{- include "istio-lib-helm.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "istio-lib-helm.fullname" . }}
+  http:
+      route:
+      {{- range $tags := .Values.image.tags }}
+      - destination:
+          host: {{ include "istio-lib-helm.fullname" $ }}
+          subset: {{ $tags.version }}
+        weight: {{ $tags.weight }}
+      {{ end }}

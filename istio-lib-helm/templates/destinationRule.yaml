@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "istio-lib-helm.fullname" . }}
+  labels:
+    {{- include "istio-lib-helm.labels" . | nindent 4 }}
+spec:
+  host: {{ include "istio-lib-helm.fullname" . }}
+  subsets:
+  {{- range $tags := .Values.image.tags }}
+    - name: {{ $tags.version }}
+      labels:
+        app: {{ include "istio-lib-helm.name" $ }}
+        version: {{ $tags.version }}
+  {{- end }}

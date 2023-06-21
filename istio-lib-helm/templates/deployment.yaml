@@ -1,0 +1,109 @@
+
+{{- $values := .Values }}
+{{- $chart := .Chart }}
+{{- range $tags := $values.image.tags }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "istio-lib-helm.fullname" $ }}
+  labels:
+    {{- include "istio-lib-helm.labels" $ | nindent 4 }}
+spec:
+  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
+  progressDeadlineSeconds: {{ $values.progressDeadlineSeconds | default 600 }}
+  {{ if $values.deployment }}
+  {{ if $values.deployment.strategy -}}
+  strategy:
+
+    {{ if $values.deployment.strategy.rollingUpdate -}}
+    rollingUpdate:
+      maxSurge: {{ if $values.deployment.strategy.rollingUpdate.maxSurge -}} {{ $values.deployment.strategy.rollingUpdate.maxSurge }} {{- else -}} 25% {{- end }}
+      maxUnavailable: {{ if $values.deployment.strategy.rollingUpdate.maxUnavailable -}} {{ $values.deployment.strategy.rollingUpdate.maxUnavailable }} {{- else -}} 25% {{- end }}
+    type: {{ if $values.deployment.strategy.type -}} {{ $values.deployment.strategy.type }} {{- else -}} "RollingUpdate" {{- end }}
+    {{- end }}
+
+  {{- end }}
+  {{- end }}
+
+  {{- if not $values.autoscaling.enabled }}
+  replicas: {{ $values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "istio-lib-helm.selectorLabels" $ | nindent 6 }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "istio-lib-helm.selectorLabels" $ | nindent 8 }}
+    spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "istio-lib-helm.serviceAccountName" $ }}
+      securityContext:
+        {{- toYaml $values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $chart.Name }}
+          env:
+          {{- range $key, $val := $values.configmapToEnv }}
+          - name: {{ $key }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "istio-lib-helm.fullname" $ }}
+                key: {{ $key }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $values.securityContext | nindent 12 }}
+          image: "{{ $values.image.repository }}:{{ $tags.version }}"
+          imagePullPolicy: {{ $values.image.pullPolicy }}
+          ports:
+          {{- range $values.image.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+          {{- end }}
+          {{- if $values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ $values.livenessProbe.path | default "/" }}
+              port: {{ $values.livenessProbe.port | default "http" }}
+            initialDelaySeconds: {{ $values.livenessProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ $values.livenessProbe.periodSeconds | default 10 }}
+            timeoutSeconds: {{ $values.livenessProbe.timeoutSeconds | default 5 }}
+            successThreshold: {{ $values.livenessProbe.successThreshold | default 1 }}
+            failureThreshold: {{ $values.livenessProbe.failureThreshold | default 3 }}
+          {{- end }}
+          {{- if $values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ $values.readinessProbe.path | default "/" }}
+              port: {{ $values.readinessProbe.port | default "http" }}
+            initialDelaySeconds: {{ $values.readinessProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ $values.readinessProbe.periodSeconds | default 10 }}
+            timeoutSeconds: {{ $values.readinessProbe.timeoutSeconds | default 5 }}
+            successThreshold: {{ $values.readinessProbe.successThreshold | default 1 }}
+            failureThreshold: {{ $values.readinessProbe.failureThreshold | default 3 }}
+          {{- end }}
+          resources:
+            {{- toYaml $values.resources | nindent 12 }}
+      {{- with $values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+---
+{{- end }}
