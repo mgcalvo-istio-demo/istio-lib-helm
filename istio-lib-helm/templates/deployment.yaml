@@ -58,6 +58,9 @@ spec:
                 name: {{ include "istio-lib-helm.fullname" $ }}
                 key: {{ $key }}
           {{- end }}
+          - name: version
+            value: {{ $tags.version }}
+          
           securityContext:
             {{- toYaml $values.securityContext | nindent 12 }}
           image: "{{ $values.image.repository }}:{{ $tags.version }}"
