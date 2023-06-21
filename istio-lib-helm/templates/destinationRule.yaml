@@ -8,7 +8,8 @@ spec:
   host: {{ include "istio-lib-helm.fullname" . }}
   subsets:
   {{- range $tags := .Values.image.tags }}
-    - name: {{ printf "v-%s" (replace $tags.version "." "_") }}
+    #reemplace el punto por guion bajo
+    - name: {{ $tags.version | replace "." "_"| quote }}
       labels:
         app: {{ include "istio-lib-helm.name" $ }}
         version: {{ $tags.version }}

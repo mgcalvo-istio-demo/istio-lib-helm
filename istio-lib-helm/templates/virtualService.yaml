@@ -12,6 +12,6 @@ spec:
       {{- range $tags := .Values.image.tags }}
       - destination:
           host: {{ include "istio-lib-helm.fullname" $ }}
-          subset: v{{ $tags.version }}
+          subset: {{ $tags.version }}
         weight: {{ $tags.weight }}
       {{ end }}
