@@ -9,6 +9,10 @@ metadata:
   name: {{ include "istio-lib-helm.fullname" $ }}
   labels:
     {{- include "istio-lib-helm.labels" $ | nindent 4 }}
+    app: {{ include "istio-lib-helm.fullname" $ }}
+    version: v{{ $tags.version }}
+    istio: monitor
+    sidecar.istio.io/inject: "true"
 spec:
   revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
   progressDeadlineSeconds: {{ $values.progressDeadlineSeconds | default 600 }}
@@ -32,6 +36,10 @@ spec:
   selector:
     matchLabels:
       {{- include "istio-lib-helm.selectorLabels" $ | nindent 6 }}
+      app: {{ include "istio-lib-helm.fullname" $ }}
+      version: v{{ $tags.version }}
+      istio: monitor
+      sidecar.istio.io/inject: "true"
   template:
     metadata:
       {{- with $values.podAnnotations }}
@@ -40,6 +48,10 @@ spec:
       {{- end }}
       labels:
         {{- include "istio-lib-helm.selectorLabels" $ | nindent 8 }}
+        app: {{ include "istio-lib-helm.fullname" $ }}
+        version: v{{ $tags.version }}
+        istio: monitor
+        sidecar.istio.io/inject: "true"
     spec:
       {{- with $values.imagePullSecrets }}
       imagePullSecrets:
@@ -58,8 +70,8 @@ spec:
                 name: {{ include "istio-lib-helm.fullname" $ }}
                 key: {{ $key }}
           {{- end }}
-          - name: version
-            value: {{ $tags.version }}
+          - name: VERSION
+            value: v{{ $tags.version }}
           
           securityContext:
             {{- toYaml $values.securityContext | nindent 12 }}
