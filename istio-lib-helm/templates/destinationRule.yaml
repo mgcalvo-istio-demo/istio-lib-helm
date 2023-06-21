@@ -9,7 +9,7 @@ spec:
   subsets:
   {{- range $tags := .Values.image.tags }}
     #reemplace el punto por guion bajo
-    - name: v{{ $tags.version | replace "." "_"| quote }}
+    - name: v{{ $tags.version | replace "." "_" }}
       labels:
         app: {{ include "istio-lib-helm.name" $ }}
         version: {{ $tags.version }}
