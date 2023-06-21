@@ -14,4 +14,5 @@ spec:
           host: {{ include "istio-lib-helm.fullname" $ }}
           subset: "v{{ $tags.version | replace "." "" }}"
         weight: {{ $tags.weight }}
+        timeout: 4
       {{ end }}
