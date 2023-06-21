@@ -12,5 +12,5 @@ spec:
     - name: "v{{ $tags.version | replace "." "" }}"
       labels:
         app: {{ include "istio-lib-helm.fullname" $ }}
-        version: {{ $tags.version }}
+        version: "v{{ $tags.version | replace "." "" }}"
   {{- end }}
