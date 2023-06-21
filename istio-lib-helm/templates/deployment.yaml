@@ -10,7 +10,7 @@ metadata:
   labels:
     {{- include "istio-lib-helm.labels" $ | nindent 4 }}
     app: {{ include "istio-lib-helm.fullname" $ }}
-    version: v{{ $tags.version }}
+    version: "v{{ $tags.version | replace "." "" }}"
     istio: monitor
     sidecar.istio.io/inject: "true"
 spec:
@@ -37,7 +37,7 @@ spec:
     matchLabels:
       {{- include "istio-lib-helm.selectorLabels" $ | nindent 6 }}
       app: {{ include "istio-lib-helm.fullname" $ }}
-      version: v{{ $tags.version }}
+      version: "v{{ $tags.version | replace "." "" }}"
       istio: monitor
       sidecar.istio.io/inject: "true"
   template:
@@ -49,7 +49,7 @@ spec:
       labels:
         {{- include "istio-lib-helm.selectorLabels" $ | nindent 8 }}
         app: {{ include "istio-lib-helm.fullname" $ }}
-        version: v{{ $tags.version }}
+        version: "v{{ $tags.version | replace "." "" }}"
         istio: monitor
         sidecar.istio.io/inject: "true"
     spec:
@@ -71,7 +71,7 @@ spec:
                 key: {{ $key }}
           {{- end }}
           - name: VERSION
-            value: v{{ $tags.version }}
+            value: "v{{ $tags.version | replace "." "" }}"
           
           securityContext:
             {{- toYaml $values.securityContext | nindent 12 }}
