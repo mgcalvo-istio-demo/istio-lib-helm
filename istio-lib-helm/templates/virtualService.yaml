@@ -15,5 +15,5 @@ spec:
           host: {{ include "istio-lib-helm.fullname" $ }}
           subset: "v{{ $tags.version | replace "." "" }}"
         weight: {{ $tags.weight }}
-        timeout: {{ $values.virtualService.timeout| default "4s" }}
       {{- end }}
+      timeout: {{ $values.virtualService.timeout| default "4s" }}

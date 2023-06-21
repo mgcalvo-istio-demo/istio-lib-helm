@@ -3,12 +3,12 @@ entries:
   istio-lib-helm:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2023-06-21T20:51:44.23030774-03:00"
+    created: "2023-06-21T20:54:43.435389917-03:00"
     description: A Helm chart for Kubernetes
-    digest: 0234228240dbe193f00b4352a23383704ed9e994eacb7d630550239a469a0687
+    digest: cd72978ab8565dfbfa377931b83b6a1625154224d53475b91bf72bfb01e1f5d3
     name: istio-lib-helm
     type: application
     urls:
     - https://mgcalvo-istio-demo.github.io/istio-lib-helm/istio-lib-helm-0.1.0.tgz
     version: 0.1.0
-generated: "2023-06-21T20:51:44.229817386-03:00"
+generated: "2023-06-21T20:54:43.434914159-03:00"
