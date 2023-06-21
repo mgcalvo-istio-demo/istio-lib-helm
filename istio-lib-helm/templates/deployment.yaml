@@ -6,7 +6,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "istio-lib-helm.fullname" $ }}
+  name: "{{ include "istio-lib-helm.fullname" $ }}-v{{ $tags.version | replace "." "" }}"
   labels:
     {{- include "istio-lib-helm.labels" $ | nindent 4 }}
     app: {{ include "istio-lib-helm.fullname" $ }}
@@ -19,7 +19,6 @@ spec:
   {{ if $values.deployment }}
   {{ if $values.deployment.strategy -}}
   strategy:
-
     {{ if $values.deployment.strategy.rollingUpdate -}}
     rollingUpdate:
       maxSurge: {{ if $values.deployment.strategy.rollingUpdate.maxSurge -}} {{ $values.deployment.strategy.rollingUpdate.maxSurge }} {{- else -}} 25% {{- end }}
