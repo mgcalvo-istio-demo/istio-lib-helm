@@ -118,5 +118,5 @@ configmapToEnv:
   commonconfigmap2: "contenido-commonconfigmap2"
 
 
-VirtualService:
+virtualService:
   timeout: 4s
