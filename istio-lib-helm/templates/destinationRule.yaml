@@ -16,6 +16,9 @@ spec:
   #     interval: 1s
   #     baseEjectionTime: 3m
   #     maxEjectionPercent: 100
+  {{- if .Values.destinationRule.trafficPolicyEnabled  }}
+  trafficPolicy: {{ toYaml .Values.destinationRule.trafficPolicy | nindent 4 }}
+  {{- end }}
   subsets:
   {{- range $tags := .Values.image.tags }}
     #reemplace el punto por guion bajo
